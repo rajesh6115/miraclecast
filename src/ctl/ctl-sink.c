@@ -97,16 +97,23 @@ static void sink_handle_get_parameter(struct ctl_sink *s,
 	if (rtsp_message_read(m, "{<>}", "wfd_video_formats") >= 0) {
 		char wfd_video_formats[128];
 		sprintf(wfd_video_formats,
-			"wfd_video_formats: 00 00 03 10 %08x %08x %08x 00 0000 0000 10 none none",
+//			"wfd_video_formats: 00 00 03 10 %08x %08x %08x 00 0000 0000 10 none none"
+			"wfd_video_formats: 40 00 01 10 0001bdeb 051557ff 00000fff 10 0000 001f 11 0780 0438, 02 10 0001bdeb 155557ff 00000fff 10 0000 001f 11 0780 0438"
+				,
 			s->resolutions_cea, s->resolutions_vesa, s->resolutions_hh);
 		r = rtsp_message_append(rep, "{&}", wfd_video_formats);
 		if (r < 0)
 			return cli_vERR(r);
 	}
+
+                      
+                      
 	/* wfd_audio_codecs */
 	if (rtsp_message_read(m, "{<>}", "wfd_audio_codecs") >= 0) {
 		r = rtsp_message_append(rep, "{&}",
-					"wfd_audio_codecs: AAC 00000007 00");
+//					"wfd_audio_codecs: AAC 00000007 00"
+					"wfd_audio_codecs: LPCM 00000003 00, AAC 0000000f 00, AC3 00000007 00"
+					);
 		if (r < 0)
 			return cli_vERR(r);
 	}
@@ -121,13 +128,55 @@ static void sink_handle_get_parameter(struct ctl_sink *s,
 			return cli_vERR(r);
 	}
 
+	r = rtsp_message_append(rep, "{&}","wfd_content_protection: none");
+	r = rtsp_message_append(rep, "{&}","wfd_display_edid: 0001 00ffffffffffff0051f38f50010000000e100104a51d10ff2f0000a057499b2610484f000000010101010101010101010101010101011a36809c70381f403020350025a510000018000000fc00496e7465726e616c204c43440a000000fd003c3c9a9a0e00000000000000000000000000000000000000000000000000000030");
+//	r = rtsp_message_append(rep, "{&}","wfd_display_edid: none");
+
+//	r = rtsp_message_append(rep, "{&}","wfd_connector_type: none");
+	r = rtsp_message_append(rep, "{&}","wfd_connector_type: 05");
+
+	r = rtsp_message_append(rep, "{&}","microsoft_cursor: none");
+//	r = rtsp_message_append(rep, "{&}","microsoft_cursor: none 0100 0100 4abf");
+//	r = rtsp_message_append(rep, "{&}","wfd2_video_formats: 00 00 03 10 %08x %08x %08x 00 0000 0000 10 none none");
+//	r = rtsp_message_append(rep, "{&}","wfd2_audio_codecs: AAC 00000007 00");
+//	r = rtsp_message_append(rep, "{&}","wfd2_rotation_capability: none");
+//	r = rtsp_message_append(rep, "{&}","intel_source_connection_indicator_enabled: none");
+//	r = rtsp_message_append(rep, "{&}","intel_source_connection_confirmation_enabled: none");
+//	r = rtsp_message_append(rep, "{&}","intel_sink_information: none");
+//	r = rtsp_message_append(rep, "{&}","intel_interactivity_mode: none");
+//	r = rtsp_message_append(rep, "{&}","intel_fast_cursor: none");
+//	r = rtsp_message_append(rep, "{&}","intel_usboip: none");
+//	r = rtsp_message_append(rep, "{&}","wfdx_rotation_capability: none");
+	r = rtsp_message_append(rep, "{&}","microsoft_rtcp_capability: none");
+//	r = rtsp_message_append(rep, "{&}","microsoft_video_formats: 0000001fffff");
+//	r = rtsp_message_append(rep, "{&}","wfdx_video_formats: 40 00 0001 0001 0000500001 0010000000 00000000 00 0000 0000 11 none none");
+//	r = rtsp_message_append(rep, "{&}","wfd_idr_request_capability: 0");
+	r = rtsp_message_append(rep, "{&}","wfd_idr_request_capability: 1");
+	r = rtsp_message_append(rep, "{&}","microsoft_latency_management_capability: none");
+	r = rtsp_message_append(rep, "{&}","microsoft_format_change_capability: none");
+	r = rtsp_message_append(rep, "{&}","microsoft_diagnostics_capability: none");
+   r = rtsp_message_append(rep, "{&}","intel_friendly_name: miraclecast");
+   r = rtsp_message_append(rep, "{&}","intel_sink_manufacturer_name: GNU Linux");
+   r = rtsp_message_append(rep, "{&}","intel_sink_model_name: Arch linux");
+   r = rtsp_message_append(rep, "{&}","intel_sink_device_URL: http://github.com/albfan/miraclecast");
+
+//   r = rtsp_message_append(rep, "{&}","intel_sink_version: product_ID=G4716-2000 hw_version=1.1.5.1345 sw_version=1.2.4.2451");
+
 	/* wfd_uibc_capability */
 	if (rtsp_message_read(m, "{<>}", "wfd_uibc_capability") >= 0 && uibc) {
 		char wfd_uibc_capability[512];
 		sprintf(wfd_uibc_capability,
-			"wfd_uibc_capability: input_category_list=GENERIC;"
-         "generic_cap_list=Mouse,SingleTouch;"
-         "hidc_cap_list=none;port=none");
+			"wfd_uibc_capability: "
+//				"input_category_list=GENERIC;"
+//                "generic_cap_list=Mouse,SingleTouch;"
+//                "hidc_cap_list=none;"
+//				"port=none"
+		        "input_category_list=GENERIC, HIDC;"
+			    "generic_cap_list=Keyboard;"
+			    "hidc_cap_list=Keyboard/USB, Mouse/USB, MultiTouch/USB"
+					", Gesture/USB, RemoteControl/USB;"
+				"port=none"
+		);
 		r = rtsp_message_append(rep, "{&}", wfd_uibc_capability);
 		if (r < 0)
 			return cli_vERR(r);
